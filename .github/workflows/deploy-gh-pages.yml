@@ -1,0 +1,73 @@
+name: Deploy to gh-pages branchname: Deploy to gh-pages branch
+
+
+
+on:on:
+
+  push:  push:
+
+    branches: [ main ]    branches: [ main ]
+
+
+
+permissions:permissions:
+
+  contents: read  contents: read
+
+  pages: write  pages: write
+
+
+
+jobs:jobs:
+
+  deploy:  deploy:
+
+    runs-on: ubuntu-latest    runs-on: ubuntu-latest
+
+    steps:    steps:
+
+      - name: Checkout      - name: Checkout
+
+        uses: actions/checkout@v4        uses: actions/checkout@v4
+
+
+
+      - name: Setup Node (optional)      - name: Setup Node (optional)
+
+        uses: actions/setup-node@v4        uses: actions/setup-node@v4
+
+        with:        with:
+
+          node-version: '18'          node-version: '18'
+
+
+
+      - name: Install dependencies if present      - name: Install dependencies if present
+
+        run: |        run: |
+
+          if [ -f package.json ]; then npm ci; else echo 'No package.json'; fi          if [ -f package.json ]; then npm ci; else echo 'No package.json'; fi
+
+
+
+      - name: Build (if you have a build script)      - name: Build (if you have a build script)
+
+        run: |        run: |
+
+          if npm run | grep -q "build"; then npm run build; else echo 'No build script, skipping'; fi          if npm run | grep -q "build"; then npm run build; else echo 'No build script, skipping'; fi
+
+
+
+      - name: Deploy to gh-pages      - name: Deploy to gh-pages
+
+        uses: peaceiris/actions-gh-pages@v3        uses: peaceiris/actions-gh-pages@v3
+
+        with:        with:
+
+          github_token: ${{ secrets.GITHUB_TOKEN }}          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+          publish_dir: ./          publish_dir: ./dist
+
+          publish_branch: gh-pages          publish_branch: gh-pages
+
+          keep_files: false          keep_files: false
