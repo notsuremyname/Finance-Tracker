@@ -197,7 +197,13 @@
               <label>Name</label>
               <input id="assetName" required />
               <label>Category</label>
-              <input id="assetCategory" />
+              <select id="assetMainCategory" required>
+                <option value="">Select Category</option>
+              </select>
+              <label>Subcategory</label>
+              <select id="assetSubCategory" required disabled>
+                <option value="">Select Subcategory</option>
+              </select>
               <label>Value</label>
               <input id="assetValue" type="number" step="0.01" />
               <div style="display:flex;gap:8px;margin-top:8px">
@@ -257,7 +263,13 @@
               <label>Name</label>
               <input id="liabilityName" required />
               <label>Category</label>
-              <input id="liabilityCategory" />
+              <select id="liabilityMainCategory" required>
+                <option value="">Select Category</option>
+              </select>
+              <label>Subcategory</label>
+              <select id="liabilitySubCategory" required disabled>
+                <option value="">Select Subcategory</option>
+              </select>
               <label>Amount</label>
               <input id="liabilityAmount" type="number" step="0.01" />
               <label>Due date</label>
