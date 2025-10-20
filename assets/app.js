@@ -95,18 +95,23 @@ function renderAssets() {
       // Subcategory header
       html += `<div class="subcategory-header">${subCat}</div>`;
       
-      // Assets in this subcategory
+      // Assets in this subcategory as cards
       assets.forEach(a => {
-        html += `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,0.02);margin-left:20px;">
-          <div style="flex:1">
-            <div><strong>${a.name}</strong></div>
-          </div>
-          <div style="width:140px;text-align:right">${fmtNumber(a.value)}</div>
-          <div style="width:110px;text-align:right">
-            <button class="btn secondary" data-act="edit-asset" data-id="${a.id}">Edit</button>
-            <button class="btn" data-act="del-asset" data-id="${a.id}">Delete</button>
-          </div>
-        </div>`;
+        html += `
+          <div class="entry-card">
+            <div class="entry-card-header">
+              <div class="entry-card-title">${a.name}</div>
+              <div class="entry-card-amount">${fmtNumber(a.value)}</div>
+            </div>
+            <div class="entry-card-details">
+              <div>Category: ${a.mainCategory}</div>
+              <div>Subcategory: ${a.subCategory}</div>
+            </div>
+            <div class="entry-card-actions">
+              <button class="btn secondary" data-act="edit-asset" data-id="${a.id}">Edit</button>
+              <button class="btn" data-act="del-asset" data-id="${a.id}">Delete</button>
+            </div>
+          </div>`;
       });
     });
   });
@@ -114,7 +119,36 @@ function renderAssets() {
   c.innerHTML = html || '<div class="muted-sm">No assets added</div>';
 }
 
-function renderCards(){ const c = document.getElementById('cardsTable'); if(!c) return; const rows = state.creditCards.map(card=>{ const avail = Number(card.limit||0) - Number(card.balance||0); const util = card.limit>0 ? (Number(card.balance||0)/Number(card.limit))*100 : 0; return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,0.02)"><div style="flex:1"><div><strong>${card.name}</strong> <span class="muted-sm">limit ${fmtNumber(card.limit)}</span></div><div class="muted-sm">Available ${fmtNumber(avail)} • Util ${util.toFixed(1)}% • AER ${card.aer||'—'}% • Due day ${card.dueDay||'—'}</div></div><div style="width:140px;text-align:right">${fmtNumber(card.balance)}</div><div style="width:140px;text-align:right"><button class="btn secondary" data-act="edit-card" data-id="${card.id}">Edit</button><button class="btn" data-act="del-card" data-id="${card.id}">Delete</button></div></div>`; }).join(''); c.innerHTML = rows || '<div class="muted-sm">No credit cards</div>'; }
+function renderCards() {
+  const c = document.getElementById('cardsTable');
+  if (!c) return;
+  
+  const rows = state.creditCards.map(card => {
+    const avail = Number(card.limit||0) - Number(card.balance||0);
+    const util = card.limit>0 ? (Number(card.balance||0)/Number(card.limit))*100 : 0;
+    
+    return `
+      <div class="entry-card">
+        <div class="entry-card-header">
+          <div class="entry-card-title">${card.name}</div>
+          <div class="entry-card-amount">${fmtNumber(card.balance)}</div>
+        </div>
+        <div class="entry-card-details">
+          <div>Credit Limit: ${fmtNumber(card.limit)}</div>
+          <div>Available Credit: ${fmtNumber(avail)}</div>
+          <div>Utilization: ${util.toFixed(1)}%</div>
+          <div>AER: ${card.aer || '—'}%</div>
+          <div>Due Day: ${card.dueDay || '—'}</div>
+        </div>
+        <div class="entry-card-actions">
+          <button class="btn secondary" data-act="edit-card" data-id="${card.id}">Edit</button>
+          <button class="btn" data-act="del-card" data-id="${card.id}">Delete</button>
+        </div>
+      </div>`;
+  }).join('');
+  
+  c.innerHTML = rows || '<div class="muted-sm">No credit cards</div>';
+}
 
 function renderLiabilities() {
   const c = document.getElementById('liabilitiesTable');
@@ -141,19 +175,24 @@ function renderLiabilities() {
       // Subcategory header
       html += `<div class="subcategory-header">${subCat}</div>`;
       
-      // Liabilities in this subcategory
+      // Liabilities in this subcategory as cards
       liabilities.forEach(l => {
-        html += `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,0.02);margin-left:20px;">
-          <div style="flex:1">
-            <div><strong>${l.name}</strong></div>
-            <div class="muted-sm">Due ${l.dueDate||'—'}</div>
-          </div>
-          <div style="width:140px;text-align:right">${fmtNumber(l.amount)}</div>
-          <div style="width:110px;text-align:right">
-            <button class="btn secondary" data-act="edit-liability" data-id="${l.id}">Edit</button>
-            <button class="btn" data-act="del-liability" data-id="${l.id}">Delete</button>
-          </div>
-        </div>`;
+        html += `
+          <div class="entry-card">
+            <div class="entry-card-header">
+              <div class="entry-card-title">${l.name}</div>
+              <div class="entry-card-amount">${fmtNumber(l.amount)}</div>
+            </div>
+            <div class="entry-card-details">
+              <div>Category: ${l.mainCategory}</div>
+              <div>Subcategory: ${l.subCategory}</div>
+              <div>Due Date: ${l.dueDate || '—'}</div>
+            </div>
+            <div class="entry-card-actions">
+              <button class="btn secondary" data-act="edit-liability" data-id="${l.id}">Edit</button>
+              <button class="btn" data-act="del-liability" data-id="${l.id}">Delete</button>
+            </div>
+          </div>`;
       });
     });
   });
@@ -512,14 +551,50 @@ function toggleSidebar(force){
 }
 
 // account options for transactions
-function buildAccountOptions(){ const select = document.getElementById('txnAccount'); if(!select) return; select.innerHTML = ''; const addOpt = (label, value)=>{ const o = document.createElement('option'); o.value = value; o.textContent = label; select.appendChild(o); };
-  if(state.assets.length) addOpt('--- Assets ---','opt-sep');
-  state.assets.forEach(a=> addOpt(`${a.name} (asset) — ${fmtNumber(a.value)}`, `asset:${a.id}`));
-  if(state.creditCards.length) addOpt('--- Credit Cards ---','opt-sep');
-  state.creditCards.forEach(c=> addOpt(`${c.name} (card) — bal ${fmtNumber(c.balance)}`, `card:${c.id}`));
-  if(state.liabilities.length) addOpt('--- Liabilities ---','opt-sep');
-  state.liabilities.forEach(l=> addOpt(`${l.name} (liability) — ${fmtNumber(l.amount)}`, `liab:${l.id}`));
-  if(select.options.length) select.selectedIndex = 0;
+function buildAccountOptions() {
+  const select = document.getElementById('txnAccount');
+  if (!select) return;
+  select.innerHTML = '';
+  
+  const addOpt = (label, value, group) => {
+    const o = document.createElement('option');
+    o.value = value;
+    o.textContent = label;
+    if (group) {
+      let optgroup = select.querySelector(`optgroup[label="${group}"]`);
+      if (!optgroup) {
+        optgroup = document.createElement('optgroup');
+        optgroup.label = group;
+        select.appendChild(optgroup);
+      }
+      optgroup.appendChild(o);
+    } else {
+      select.appendChild(o);
+    }
+  };
+
+  // Add assets
+  if (state.assets.length) {
+    state.assets.forEach(a => {
+      addOpt(`${a.name} — ${fmtNumber(a.value)}`, `asset:${a.id}`, 'Assets');
+    });
+  }
+
+  // Add credit cards
+  if (state.creditCards.length) {
+    state.creditCards.forEach(c => {
+      addOpt(`${c.name} — Balance: ${fmtNumber(c.balance)}`, `card:${c.id}`, 'Credit Cards');
+    });
+  }
+
+  // Add liabilities
+  if (state.liabilities.length) {
+    state.liabilities.forEach(l => {
+      addOpt(`${l.name} — ${fmtNumber(l.amount)}`, `liab:${l.id}`, 'Liabilities');
+    });
+  }
+
+  if (select.options.length) select.selectedIndex = 0;
 }
 
 // reverse apply helper used when editing
