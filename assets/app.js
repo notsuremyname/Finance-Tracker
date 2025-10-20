@@ -448,6 +448,15 @@ if(liabilityForm) {
   // settings
   const settingsForm = document.getElementById('settingsForm'); if(settingsForm) settingsForm.addEventListener('submit', e=>{ e.preventDefault(); const cur = (document.getElementById('settingCurrency').value || 'USD').toUpperCase(); state.settings.currency = cur; state.settings.theme = document.getElementById('settingTheme').value || 'dark'; state.settings.includeCreditInNetworth = document.getElementById('settingIncludeCredit').checked; debouncedSave(); alert('Settings saved and applied'); });
 
+  // clear data button
+  const clearDataBtn = document.getElementById('clearDataBtn'); if(clearDataBtn) clearDataBtn.addEventListener('click', ()=>{ 
+    if(!confirm('Are you sure you want to clear all data? This cannot be undone.')) return;
+    if(!confirm('Last chance! All your transactions, assets, cards, and liabilities will be deleted. Are you really sure?')) return;
+    state = structuredClone(DEFAULT_DATA);
+    saveState();
+    alert('All data has been cleared.');
+  });
+
   // storage listener
   window.addEventListener('storage', (e)=>{ if(e.key===STORAGE_KEY){ state = loadState(); renderAll(); } });
 }
