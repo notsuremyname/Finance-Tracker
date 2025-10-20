@@ -98,6 +98,11 @@ label{font-size:12px;color:var(--muted)}
   .sidebar.open{transform:translateX(0)}
   .topbar{display:flex}
   .grid-2{grid-template-columns:1fr}
+
+  /* On small screens the topbar contains the burger and title area.
+     Hide the sidebar brand title to avoid duplicate headings when the
+     sidebar is visible or when layout collapses. */
+  .brand h1, .brand p { display: none; }
 }
 
 .chart-box{height:200px;display:flex;align-items:center;justify-content:center}
