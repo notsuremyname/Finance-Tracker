@@ -1,41 +1,38 @@
 name: Deploy to GitHub Pages
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node (for potential build steps)
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
         with:
-          node-version: '18'
+          fetch-depth: 0
+          ref: main
 
-      - name: Install dependencies (skip if none)
+      - name: Configure Git
         run: |
-          if [ -f package.json ]; then npm ci; else echo 'no package.json, skipping install'; fi
-
-      - name: Build (noop unless you add a build script)
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+      
+      - name: Commit any pending changes
         run: |
-          if npm run | grep -q "build"; then npm run build; else echo 'no build script, skipping'; fi
+          git add .
+          git diff-index --quiet HEAD || (git commit -m "chore: auto-commit before build" && git push origin main)
 
       - name: Deploy to GitHub Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload artifact for GitHub Pages
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: ./dist
-
-      - name: Deploy
-        uses: actions/deploy-pages@v1
+        run: |
+          git checkout gh-pages || git checkout -b gh-pages
+          git rm -rf .
+          git checkout main -- index.html assets/*
+          git add .
+          git commit -m "Deploy: Updated site with latest changes"
+          git push -f origin gh-pages
+          git checkout main
