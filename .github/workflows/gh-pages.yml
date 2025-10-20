@@ -1,0 +1,41 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node (for potential build steps)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies (skip if none)
+        run: |
+          if [ -f package.json ]; then npm ci; else echo 'no package.json, skipping install'; fi
+
+      - name: Build (noop unless you add a build script)
+        run: |
+          if npm run | grep -q "build"; then npm run build; else echo 'no build script, skipping'; fi
+
+      - name: Deploy to GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./dist
+
+      - name: Deploy
+        uses: actions/deploy-pages@v1
