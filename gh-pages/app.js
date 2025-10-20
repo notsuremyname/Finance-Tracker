@@ -183,8 +183,42 @@ function drawExpensePie(){ const canvas = document.getElementById('expensePie');
 
 // ----------------- Actions & Forms -----------------
 function initUI(){
-  document.querySelectorAll('.nav button').forEach(btn=>btn.addEventListener('click', e=>{ document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); const tab = btn.dataset.tab; document.querySelectorAll('.tab').forEach(t=>t.style.display='none'); const el = document.getElementById('tab-'+tab); if(el) el.style.display='block'; if(window.innerWidth<=900) toggleSidebar(false); }));
-  const burger = document.getElementById('burger'); if(burger) burger.addEventListener('click', ()=> toggleSidebar());
+  // Navigation buttons
+  document.querySelectorAll('.nav button').forEach(btn=>btn.addEventListener('click', e=>{ 
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active')); 
+    btn.classList.add('active'); 
+    const tab = btn.dataset.tab; 
+    document.querySelectorAll('.tab').forEach(t=>t.style.display='none'); 
+    const el = document.getElementById('tab-'+tab); 
+    if(el) el.style.display='block'; 
+    if(window.innerWidth<=900) toggleSidebar(false); 
+  }));
+
+  // Mobile burger menu
+  const burger = document.getElementById('burger'); 
+  if(burger) {
+    burger.addEventListener('click', (e)=> {
+      e.preventDefault();
+      e.stopPropagation();
+      const sidebar = document.getElementById('sidebar');
+      if(sidebar) {
+        sidebar.classList.toggle('open');
+      }
+    });
+  }
+
+  // Close sidebar when clicking outside on mobile
+  document.addEventListener('click', (e) => {
+    if(window.innerWidth <= 900) {
+      const sidebar = document.getElementById('sidebar');
+      const burger = document.getElementById('burger');
+      if(sidebar && sidebar.classList.contains('open') && 
+         !sidebar.contains(e.target) && 
+         !burger.contains(e.target)) {
+        sidebar.classList.remove('open');
+      }
+    }
+  });
 
   const quickForm = document.getElementById('quickAddForm'); if(quickForm) quickForm.addEventListener('submit', e=>{ e.preventDefault(); const type = document.getElementById('quickType').value; const category = document.getElementById('quickCategory').value || (type==='income'?'Salary':'Misc'); const amount = Number(document.getElementById('quickAmount').value) || 0; const date = document.getElementById('quickDate').value || new Date().toISOString().slice(0,10); const t = { id: uid(), type, category, amount, date, accountId: null, note: '' }; state.transactions.push(t); debouncedSave(); document.getElementById('quickAmount').value=''; document.getElementById('quickCategory').value=''; });
   const clearQuick = document.getElementById('clearQuick'); if(clearQuick) clearQuick.addEventListener('click', ()=>{ document.getElementById('quickAmount').value=''; document.getElementById('quickCategory').value=''; });
@@ -461,7 +495,21 @@ if(liabilityForm) {
   window.addEventListener('storage', (e)=>{ if(e.key===STORAGE_KEY){ state = loadState(); renderAll(); } });
 }
 
-function toggleSidebar(force){ const sb = document.getElementById('sidebar'); if(!sb) return; if(force===undefined) { if(sb.classList.contains('open')) { sb.classList.remove('open'); } else { sb.classList.add('open'); } } else if(force) { sb.classList.add('open'); } else { sb.classList.remove('open'); } }
+function toggleSidebar(force){ 
+  const sb = document.getElementById('sidebar'); 
+  if(!sb) return;
+  
+  // Only handle mobile menu on small screens
+  if(window.innerWidth > 900) return;
+  
+  if(force === undefined) { 
+    sb.classList.toggle('open');
+  } else if(force) {
+    sb.classList.add('open');
+  } else {
+    sb.classList.remove('open');
+  } 
+}
 
 // account options for transactions
 function buildAccountOptions(){ const select = document.getElementById('txnAccount'); if(!select) return; select.innerHTML = ''; const addOpt = (label, value)=>{ const o = document.createElement('option'); o.value = value; o.textContent = label; select.appendChild(o); };
