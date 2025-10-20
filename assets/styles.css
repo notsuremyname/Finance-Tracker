@@ -1,0 +1,106 @@
+:root{
+  --bg: #0f1724; /* dark */
+  --panel: #0b1220;
+  --muted: #98a0b3;
+  --text: #e6eef8;
+  --accent: #4f46e5;
+  --accent-2: #06b6d4;
+  --glass: rgba(255,255,255,0.03);
+  --success: #10b981;
+  --danger: #ef4444;
+  --card-radius: 14px;
+  --shadow: 0 6px 20px rgba(2,6,23,0.6);
+  color-scheme: dark;
+}
+[data-theme="light"]{
+  --bg: #f6f8fb;
+  --panel: #ffffff;
+  --muted: #6b7280;
+  --text: #0f1724;
+  --glass: rgba(15,23,36,0.03);
+  --shadow: 0 8px 24px rgba(12,18,30,0.06);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background:linear-gradient(180deg,var(--bg) 0%, #071028 100%);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  padding:18px;
+}
+
+.app{
+  max-width:1100px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns: 320px 1fr;
+  gap:18px;
+  align-items:start;
+}
+
+.sidebar{
+  background:var(--panel);
+  border-radius:var(--card-radius);
+  padding:12px;
+  box-shadow:var(--shadow);
+  min-height:520px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:18px}
+.brand h1{font-size:18px;margin:0}
+.brand p{margin:0;color:var(--muted);font-size:13px}
+
+.nav{display:flex;flex-direction:column;gap:6px}
+.nav button{background:transparent;color:var(--muted);border:0;padding:10px;border-radius:10px;text-align:left;font-size:14px;display:flex;gap:8px;align-items:center;cursor:pointer}
+.nav button.active{background:var(--glass);color:var(--text)}
+
+.section-title{font-size:13px;color:var(--muted);margin-top:6px;margin-bottom:6px}
+
+.topbar{display:none;align-items:center;justify-content:space-between;margin-bottom:10px}
+.burger{background:transparent;border:0;color:var(--text);font-size:20px;padding:8px;border-radius:8px}
+
+.main{min-height:520px;background:var(--panel);border-radius:var(--card-radius);padding:14px;box-shadow:var(--shadow)}
+.grid-2{display:grid;grid-template-columns:1fr 320px;gap:14px}
+.panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:12px}
+.card{background:transparent;padding:14px;border-radius:12px}
+
+.row{display:flex;gap:12px;align-items:center}
+.col{display:flex;flex-direction:column;gap:8px}
+
+.kpi{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:var(--glass)}
+.kpi h3{margin:0;font-size:13px}
+.kpi .value{font-size:18px;font-weight:700}
+.muted{color:var(--muted);font-size:13px}
+
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px;text-align:left;font-size:13px;color:var(--text)}
+thead th{color:var(--muted);font-size:12px}
+
+form{display:grid;gap:8px}
+input,select,textarea{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px;border-radius:8px;color:inherit}
+[data-theme="light"] input, [data-theme="light"] select{border-color:rgba(15,23,36,0.06)}
+label{font-size:12px;color:var(--muted)}
+.btn{display:inline-block;padding:8px 12px;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:10px;color:white;border:0;cursor:pointer}
+.btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+.btn.danger{background:linear-gradient(90deg,var(--danger),#ff7961)}
+
+.muted-sm{color:var(--muted);font-size:12px}
+.pill{padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.03);font-size:12px}
+
+@media (max-width:900px){
+  .app{grid-template-columns:1fr;padding:12px}
+  .sidebar{position:fixed;left:12px;top:60px;bottom:12px;width:280px;z-index:60;transform:translateX(-120%);transition:transform .22s ease;}
+  .sidebar.open{transform:translateX(0)}
+  .topbar{display:flex}
+  .grid-2{grid-template-columns:1fr}
+}
+
+.chart-box{height:200px;display:flex;align-items:center;justify-content:center}
+
+/* small visual tweaks */
+canvas{max-width:100%;height:auto}
